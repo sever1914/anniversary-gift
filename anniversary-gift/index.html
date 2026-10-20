@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#060208">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Для тебя ♥</title>
+
+  <link rel="preload" href="fonts/cormorant-garamond-cyrillic-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/cormorant-garamond-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Фон: медленно поднимающиеся искорки -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <main id="app">
+    <!-- Экран 1: приветствие и пожелания (тап / свайп) -->
+    <section id="intro" class="screen is-active" aria-label="Пожелания">
+      <div class="wish-wrap">
+        <p id="wish" class="wish" aria-live="polite"></p>
+      </div>
+      <div id="dots" class="dots" aria-hidden="true"></div>
+      <div id="hint" class="hint" aria-hidden="true">коснись экрана</div>
+    </section>
+
+    <!-- Экран 2: сердце из «Я люблю тебя» + кнопка сюрприза -->
+    <section id="stage" class="screen" aria-label="Сердце">
+      <canvas id="heart" class="heart-canvas"></canvas>
+      <p id="heart-caption" class="heart-caption"></p>
+      <button id="surprise-btn" class="surprise-btn" type="button"></button>
+    </section>
+  </main>
+
+  <!-- Экран 3: видео-сюрприз -->
+  <div id="video-modal" class="video-modal" hidden role="dialog" aria-modal="true" aria-label="Сюрприз">
+    <button id="video-close" class="video-close" type="button" aria-label="Закрыть">✕</button>
+    <div id="video-host" class="video-host"></div>
+    <p id="video-caption" class="video-caption" aria-live="polite"></p>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/heart.js"></script>
+  <script src="js/intro.js"></script>
+  <script src="js/video.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
