@@ -1,0 +1,310 @@
+/* Шрифт лежит рядом с сайтом — никаких внешних запросов (Cormorant Garamond, лицензия OFL) */
+@font-face {
+  font-family: "Cormorant Garamond"; font-style: italic; font-weight: 400; font-display: swap;
+  src: url("../fonts/cormorant-garamond-cyrillic-400-italic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "Cormorant Garamond"; font-style: italic; font-weight: 400; font-display: swap;
+  src: url("../fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+
+:root {
+  --bg: #060208;
+  --ink: #f6e3e8;
+  --ink-dim: rgba(246, 227, 232, 0.55);
+  --rose: #ff4d6d;
+  --wine: #9a0a24;
+  --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --sans: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  font-family: var(--sans);
+  background:
+    radial-gradient(120% 70% at 50% 28%, #1b0716 0%, rgba(6, 2, 8, 0) 62%),
+    var(--bg);
+}
+
+#bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#app { position: fixed; inset: 0; z-index: 1; }
+
+.screen {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+}
+.screen.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.9s ease;
+}
+
+/* ---------- Экран 1: пожелания ---------- */
+#intro { touch-action: none; cursor: pointer; }
+
+.wish-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--safe-top) + 24px) 32px calc(var(--safe-bottom) + 90px);
+}
+
+.wish {
+  margin: 0;
+  max-width: 22em;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(26px, 7.4vw, 36px);
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-shadow: 0 0 28px rgba(255, 77, 109, 0.28);
+}
+.wish.big {
+  font-size: clamp(38px, 11vw, 56px);
+  line-height: 1.15;
+  /* без background-clip: он делает анимированные слова невидимыми (баг найден на тесте) */
+  color: #ffe3ea;
+  text-shadow: 0 0 26px rgba(255, 77, 109, 0.55), 0 0 4px rgba(255, 160, 180, 0.35);
+}
+
+.wish .w {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(6px);
+  animation: wordIn 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(var(--i) * 85ms);
+}
+.wish.out .w {
+  animation: wordOut 0.35s ease forwards;
+  animation-delay: 0ms;
+}
+@keyframes wordIn  { to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes wordOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-6px); filter: blur(4px); } }
+
+.dots {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(var(--safe-bottom) + 64px);
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+.dots i {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(246, 227, 232, 0.2);
+  transition: background 0.5s, transform 0.5s;
+}
+.dots i.on { background: var(--rose); transform: scale(1.35); }
+
+.hint {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(var(--safe-bottom) + 26px);
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0;
+  animation: hintPulse 2.8s ease-in-out infinite;
+  animation-delay: 2.2s;
+}
+@keyframes hintPulse { 0%, 100% { opacity: 0; } 50% { opacity: 0.8; } }
+
+/* ---------- Экран 2: сердце ---------- */
+.heart-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform-origin: 50% 44%;
+  will-change: transform;
+}
+.heart-canvas.live { animation: beat 2.4s ease-in-out infinite; }
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  12%      { transform: scale(1.028); }
+  24%      { transform: scale(1); }
+  36%      { transform: scale(1.016); }
+  56%      { transform: scale(1); }
+}
+
+.heart-caption {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(var(--safe-bottom) + 118px);
+  margin: 0;
+  padding: 0 28px;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21px;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1.4s ease, transform 1.4s ease;
+  text-shadow: 0 0 18px rgba(255, 77, 109, 0.35);
+  pointer-events: none;
+}
+.heart-caption.show { opacity: 0.92; transform: none; }
+
+.surprise-btn {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--safe-bottom) + 38px);
+  transform: translate(-50%, 16px);
+  min-width: 250px;
+  white-space: nowrap;
+  padding: 16px 30px;
+  border: 1px solid rgba(255, 143, 166, 0.55);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff4f6;
+  background: linear-gradient(135deg, rgba(190, 18, 52, 0.85), rgba(110, 6, 34, 0.9));
+  box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.45), 0 10px 30px rgba(154, 10, 36, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  transition: opacity 1.4s ease, transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.surprise-btn.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+  animation: btnGlow 2.6s ease-out infinite 1.6s;
+}
+.surprise-btn:active { filter: brightness(1.15); }
+@keyframes btnGlow {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.45), 0 10px 30px rgba(154, 10, 36, 0.45); }
+  70%  { box-shadow: 0 0 0 16px rgba(255, 77, 109, 0), 0 10px 30px rgba(154, 10, 36, 0.45); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0), 0 10px 30px rgba(154, 10, 36, 0.45); }
+}
+
+/* ---------- Экран 3: видео ---------- */
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--safe-top) + 56px) 14px calc(var(--safe-bottom) + 24px);
+  background: #060208;          /* непрозрачный: сердце и кнопка не просвечивают */
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.video-modal[hidden] { display: none; }
+.video-modal.open { opacity: 1; }
+
+.video-close {
+  position: absolute;
+  top: calc(var(--safe-top) + 12px);
+  right: 14px;
+  width: 42px; height: 42px;
+  border: 0;
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.video-host {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  justify-content: center;
+}
+.video-host video {
+  width: 100%;
+  max-height: 72vh;
+  max-height: 72dvh;
+  border-radius: 16px;
+  background: #000;
+  box-shadow: 0 0 60px rgba(154, 10, 36, 0.35);
+}
+.video-host iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 16px;
+  background: #000;
+}
+.video-host .video-missing {
+  padding: 28px 22px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  border: 1px dashed rgba(255, 143, 166, 0.4);
+  border-radius: 16px;
+}
+
+.video-caption {
+  min-height: 3.2em;
+  margin: 18px 12px 0;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.3;
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.video-caption.show { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .heart-canvas.live, .surprise-btn.show, .hint { animation: none; }
+  .hint { opacity: 0.7; }
+}
